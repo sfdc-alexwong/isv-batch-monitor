@@ -1,0 +1,9 @@
+@isTest
+private class ContactScannerTest {
+    static testMethod void validateScanning() {
+        Test.setMock(HttpCalloutMock.class, new BatchMonitoringMockHttpResponseGenerator());
+
+        ContactScanner s = new ContactScanner(null);
+        s.scan();
+    }
+}

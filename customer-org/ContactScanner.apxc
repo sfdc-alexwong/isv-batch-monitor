@@ -1,0 +1,26 @@
+// This class drives the batch operations for the POC.
+public class ContactScanner {
+
+    //constructor to get the Case record
+    public ContactScanner(ApexPages.StandardSetController controller) {
+    }
+
+    //Method that can is called from the Visual Force page action attribute
+    public PageReference scan() {    
+        BatchMonitoring a = new BatchMonitoring();
+        a.batch();
+
+       PageReference pageRef = new PageReference('/003?fcf=00Bf4000004Eh2R');
+        pageRef.setRedirect(true);
+       return pageRef; //Returns to the case page
+    }
+    
+    public PageReference reconcile() {    
+        BatchMonitoring a = new BatchMonitoring();
+        a.batch('reconcile');
+
+       PageReference pageRef = new PageReference('/003?fcf=00Bf4000004Eh2R');
+        pageRef.setRedirect(true);
+       return pageRef; //Returns to the case page
+    }
+}

@@ -1,0 +1,9 @@
+@isTest
+private class BatchMonitoringTest {
+    static testMethod void validateMonitoring() {
+        Test.setMock(HttpCalloutMock.class, new BatchMonitoringMockHttpResponseGenerator());
+
+        BatchMonitoring a = new BatchMonitoring();
+        a.batch();
+    }
+}

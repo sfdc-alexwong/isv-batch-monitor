@@ -1,0 +1,28 @@
+// This is the batch Apex operation for the POC to demonstrate a batch that can either run successfully or get cancelled mid-run.
+global class DailyBatch implements Database.Batchable<sObject>, Database.AllowsCallouts {
+    private BatchMonitoring monitor;
+    private String jobId;
+
+    public DailyBatch(BatchMonitoring monitor){
+    this.monitor = monitor;
+        jobId = monitor.createJobId();
+    }
+    
+    global Database.QueryLocator start(Database.BatchableContext BC){
+        String jobKey = monitor.logEvent('day-batch', jobId, 'StartBatch', DateTime.now());
+        return Database.getQueryLocator('SELECT Id, Title FROM Contact');
+    }
+    
+    global void execute(Database.BatchableContext BC, List<sObject> scope){
+        for(SObject s : scope){
+            Contact c = (Contact) s;
+            if (c.title == 'None') {
+                System.abortJob(BC.getJobId());
+            } 
+        }
+    }
+    
+    global void finish(Database.BatchableContext BC){
+        String jobKey = monitor.logEvent('day-batch', jobId, 'EndBatch', DateTime.now());
+    }
+}

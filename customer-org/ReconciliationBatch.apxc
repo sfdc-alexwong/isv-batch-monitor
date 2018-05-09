@@ -1,0 +1,28 @@
+// This is a second batch Apex operation for the POC.
+global class ReconciliationBatch implements Database.Batchable<sObject>, Database.AllowsCallouts {
+    private BatchMonitoring monitor;
+    private String jobId;
+
+    public ReconciliationBatch(BatchMonitoring monitor){
+    this.monitor = monitor;
+        jobId = monitor.createJobId();
+    }
+    
+    global Database.QueryLocator start(Database.BatchableContext BC){
+        String jobKey = monitor.logEvent('reconcile-batch', jobId, 'StartBatch', DateTime.now());
+        return Database.getQueryLocator('SELECT Id, Title FROM Contact');
+    }
+    
+    global void execute(Database.BatchableContext BC, List<sObject> scope){
+        for(SObject s : scope){
+            Contact c = (Contact) s;
+            if (c.title == 'None') {
+                System.abortJob(BC.getJobId());
+            } 
+        }
+    }
+    
+    global void finish(Database.BatchableContext BC){
+        String jobKey = monitor.logEvent('reconcile-batch', jobId, 'EndBatch', DateTime.now());
+    }
+}

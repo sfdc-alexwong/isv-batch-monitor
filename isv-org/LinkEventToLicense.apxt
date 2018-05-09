@@ -1,0 +1,3 @@
+trigger LinkEventToLicense on MonitoringEvent__c (before insert) {
+    LinkEventToLicenseHandler.beforeInsert(Trigger.new);
+}

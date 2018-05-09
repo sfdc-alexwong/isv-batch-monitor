@@ -1,0 +1,10 @@
+public class LinkEventToLicenseHandler {
+    public static void beforeInsert(List<MonitoringEvent__c> events) {
+        for (MonitoringEvent__c event : events) {
+            List<sfLma__License__c> licenses = [select id from sfLma__License__c where sfLma__Subscriber_Org_ID__c=:event.OrgID__c limit 1];
+            if (licenses.size()==1) {
+                event.license__c = licenses[0].id;
+            }
+        }
+    }
+}
